@@ -21,11 +21,34 @@ proc processInput(vm: var VM, input: string): bool =
           echo(vm.stack)
         of "bye":
           ctrlc()
-        of "+": # (b a -- [a+b])
+        of "+": # (b a -- [b+a])
           let
             a = vm.stack.pop()
             b = vm.stack.pop()
-          vm.stack.add(a + b)
+          vm.stack.add(b + a)
+        of "-": # (b a -- [b-a])
+          let
+            a = vm.stack.pop()
+            b = vm.stack.pop()
+          vm.stack.add(b - a)
+        of "*": # (b a -- [b*a])
+          let
+            a = vm.stack.pop()
+            b = vm.stack.pop()
+          vm.stack.add(b * a)
+        of "/": # (b a -- [b/a])
+          let
+            a = vm.stack.pop()
+            b = vm.stack.pop()
+          vm.stack.add(b div a)
+        of "%": # (b a -- [b%a])
+          let
+            a = vm.stack.pop()
+            b = vm.stack.pop()
+          vm.stack.add(b mod a)
+        of "pop": # (b a -- b)
+          let a = vm.stack.pop()
+          echo(a)
         else:
           echo("I don't know what `" & input & "` means...")
           return false
