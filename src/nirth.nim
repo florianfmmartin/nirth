@@ -1,4 +1,4 @@
-from std/strutils import contains, parseInt, splitWhitespace
+from std/strutils import contains, find, parseInt, splitWhitespace
 
 type
   VM = object
@@ -22,6 +22,16 @@ proc compile(vm: var VM, input: string) =
 proc endCompile(vm: var VM) =
   vm.compiledWords &= " ;;;; "
   vm.compileFlag = false
+
+proc runWord(vm: VM, word: string) =
+  let
+    formattedWord = ":::: " & word & " "
+    startIndex = vm.compiledWords.find(formattedWord)
+    endIndex = vm.compiledWords.find(";;;;", start=startIndex)
+    wordDefinition = vm.compiledWords[startIndex..<endIndex]
+    wordDefinitionList = wordDefinition.splitWhitespace()
+    definitionList = wordDefinitionList[2..^1]
+  echo(definitionList)
 
 proc processNonCompilingInput(vm: var VM, input: string): bool =
   case input:
@@ -65,8 +75,9 @@ proc processNonCompilingInput(vm: var VM, input: string): bool =
     of ";":
       echo("Not in compile mode...")
     else:
-      if (vm.compiledWords.contains((":::: " & input))):
-        echo("`" & input & "` exists in dictionary...")
+      if (vm.compiledWords.contains((":::: " & input & " "))):
+        # echo("`" & input & "` exists in dictionary...")
+        vm.runWord(input)
       else:
         echo("I don't know what `" & input & "` means...")
         return false
